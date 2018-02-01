@@ -7,7 +7,7 @@
       </button>
     </nav>
 
-    <img src="./assets/prow-featured.jpg">    
+    <img class="bird-img" src="./assets/prow-featured.jpg">
     <section class="jumbotron text-center" style="margin-bottom:0px;">
       <div class="container">
         <h1 class="jumbotron-heading">{{apptitle}}</h1>
@@ -16,54 +16,156 @@
     </section>
     
     <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
-      <div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden" style="flex:1;">
+      <div class="bg-dark mr-md-3 py-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden" style="flex:1;">
         <div class="my-3 py-3">
           <h2 class="display-5">Enterate</h2>
           <p class="lead">Echa un vistazo a las últimas publicaciones</p>
         </div>
-
+        
+        <div class="card" v-for="anuncio in anuncios" :key="anuncio._id">
+          <div class="card-header">
+            <strong>{{anuncio.autor.nombre}} {{ anuncio.autor.apellido }} ({{ anuncio.autor.email }})</strong>
+            <span class="card-subtitle mr-2 text-muted">{{ anuncio.createdAt }}</span>
+          </div>
+          <div class="card-body">
+            <p class="card-text">{{ anuncio.contenido }}</p>
+          </div>
+          <div class="card-footer text-muted">
+            {{ anuncio.ubicacion }}
+          </div>
+        </div>
+        
         <div class="container">
           <div class="row">
-            <div class="bg-light col-md-12">
-              <p>Autor          
-              </p>
-              <p>12/03/07</p>
+            <div class="card">
+              <div class="card-header">
+                <strong>asd</strong>
+                <span class="card-subtitle mr-2 text-muted">commented 5 days ago</span>
+              </div>
+              <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              </div>
+              <div class="card-footer text-muted">
+                  Barranquilla
+                </div>
             </div>
           </div>
+          
           <div class="row">
-            <div>
-              <p>contenido bla bla bla</p>
-
+            <div class="card">
+              <div class="card-header">
+                <strong>Andres Arguelles</strong>
+                <span class="card-subtitle mr-2 text-muted">commented 5 days ago</span>
+              </div>
+              <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              </div>
+              <div class="card-footer text-muted">
+                  Barranquilla
+                </div>
             </div>
-            
           </div>
+          
         </div>
       </div>
       <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden" style="flex:1;">
         <div class="my-3 p-3">
-          <h2 class="display-5">Another headline</h2>
-          <p class="lead">And an even wittier subheading.</p>
+          <h2 class="display-5">Expresate</h2>
+          <p class="lead">Comunica tus ideas.</p>
         </div>
-        <div class="bg-dark box-shadow mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+        <div>
+          <form id="form">
+            <div class="form-group row">
+              <label for="usrlst" class ="col-sm-2 col-form-label">Autor:</label>
+              <div class="col-sm-10">
+                <select name="autor" id="usrlst" v-model="anuncio.autor">
+                  <option v-for="autor in usuarios" :value="autor._id">
+                    {{ autor.nombre }} {{ autor.apellido }} - <span class="text-muted">({{ autor.email }})</span>
+                  </option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="form-group row">
+              <label for="cntnttxt" class ="col-sm-2 col-form-label">Contenido:</label>
+              <div class="col-sm-10">
+                <textarea class="form-control" id="cntnttxt" name="contenido" v-model="anuncio.contenido" rows="4"></textarea>
+              </div>
+            </div>
+            
+            <div class="form-group row">
+              <label for="lctninpt" class ="col-sm-2 col-form-label">Ubicación:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="lctninpt" name="ubicacion" v-model="anuncio.ubicacion"/>
+              </div>
+            </div>
+            <button @click.prevent="create">Create</button>
+          </form>
+        </div>
+        
       </div>
     </div>
-    
-    <h2>Ecosystem</h2>
-    <ul>
-      <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-      <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-      <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
-    </ul>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+import config from "./config.json";
+
 export default {
   name: 'TwitNow',
   data () {
     return {
-      apptitle: 'TwitNow'
+      apptitle: 'TwitNow',
+      anuncios: [],
+      usuarios: [],
+      anuncio: {
+        contenido : '',
+        autor:'',
+        ubicacion : ''
+      }
+    }
+  },
+  created (){
+    this._getUsuarios();
+    this._getAnuncios();
+  },
+  
+  methods: {
+    _getAnuncios(){
+      axios.get(`${config.baseURL}/anuncios`,{
+        withCredentials: true
+      })
+      .then( response => {
+        
+        this.anuncios = response.data.data;
+      })
+    },
+    _getUsuarios(){
+      axios.get(`${config.baseURL}/usuarios`,{
+        withCredentials: true
+      })
+      .then( response => {
+        this.usuarios = response.data.data;
+      })
+    },
+    
+    create(){
+      let payload = "";
+      Object.keys(this.anuncio).forEach(key => {
+        payload+=`${key}=${this.anuncio[key]}&`
+      });
+      
+      axios.post(`${config.baseURL}/anuncios`, payload, {
+        withCredentials: true,
+        headers: {
+          //'Content-Type': 'application/x-www-form-urlencoded'
+          'Content-Type': 'application/application/json'
+        }
+      })
+      .then( response => {
+        this._getAnuncios();
+      })
     }
   }
 }

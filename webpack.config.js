@@ -48,7 +48,8 @@ module.exports = {
   devServer: {
     historyApiFallback: true,
     noInfo: true,
-    overlay: true
+    overlay: true,
+    public: 'twitnowfe-andresau93.c9users.io'
   },
   performance: {
     hints: false
