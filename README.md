@@ -15,7 +15,7 @@ Para desplegar sólo ha de ejecutar los siguientes pasos
   - Ejecutar el comando npm install
   - Crear los archivos de configuración en la ruta config.json (baseURL -> URL del API)
   - Ejecutar el comando npm run dev
-  - Acceder en el navegador en la dirección http://localhost:8080 o a aquella que sea configurada en el archivo webpack.config.js (devserver.public)
+  - Acceder en el navegador en la dirección http://localhost:8080 o a aquella que sea configurada en el archivo webpack.config.js (devserver.public, valor por defecto es 2f2344d38164467e82d3774a5ea451d6.vfs.cloud9.us-east-2.amazonaws.com)
 
 ## Build Setup
 
