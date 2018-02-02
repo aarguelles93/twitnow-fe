@@ -49,7 +49,7 @@ module.exports = {
     historyApiFallback: true,
     noInfo: true,
     overlay: true,
-    public: 'twitnowfe-andresau93.c9users.io'
+    public: '127.0.0.1'
   },
   performance: {
     hints: false

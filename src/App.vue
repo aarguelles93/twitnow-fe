@@ -22,7 +22,7 @@
           <p class="lead">Echa un vistazo a las últimas publicaciones</p>
         </div>
         
-        <div class="card" v-for="anuncio in anuncios" :key="anuncio._id">
+        <div class="card mb-3" v-for="anuncio in anuncios" :key="anuncio._id">
           <div class="card-header">
             <strong>{{anuncio.autor.nombre}} {{ anuncio.autor.apellido }} ({{ anuncio.autor.email }})</strong>
             <span class="card-subtitle mr-2 text-muted">{{ anuncio.createdAt }}</span>
@@ -35,38 +35,6 @@
           </div>
         </div>
         
-        <div class="container">
-          <div class="row">
-            <div class="card">
-              <div class="card-header">
-                <strong>asd</strong>
-                <span class="card-subtitle mr-2 text-muted">commented 5 days ago</span>
-              </div>
-              <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              </div>
-              <div class="card-footer text-muted">
-                  Barranquilla
-                </div>
-            </div>
-          </div>
-          
-          <div class="row">
-            <div class="card">
-              <div class="card-header">
-                <strong>Andres Arguelles</strong>
-                <span class="card-subtitle mr-2 text-muted">commented 5 days ago</span>
-              </div>
-              <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              </div>
-              <div class="card-footer text-muted">
-                  Barranquilla
-                </div>
-            </div>
-          </div>
-          
-        </div>
       </div>
       <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden" style="flex:1;">
         <div class="my-3 p-3">
@@ -78,7 +46,7 @@
             <div class="form-group row">
               <label for="usrlst" class ="col-sm-2 col-form-label">Autor:</label>
               <div class="col-sm-10">
-                <select name="autor" id="usrlst" v-model="anuncio.autor">
+                <select class="form-control" name="autor" id="usrlst" v-model="anuncio.autor">
                   <option v-for="autor in usuarios" :value="autor._id">
                     {{ autor.nombre }} {{ autor.apellido }} - <span class="text-muted">({{ autor.email }})</span>
                   </option>
@@ -99,7 +67,7 @@
                 <input type="text" class="form-control" id="lctninpt" name="ubicacion" v-model="anuncio.ubicacion"/>
               </div>
             </div>
-            <button @click.prevent="create">Create</button>
+            <button class="btn btn-dark" @click.prevent="create">Create</button>
           </form>
         </div>
         
@@ -151,21 +119,26 @@ export default {
     },
     
     create(){
-      let payload = "";
-      Object.keys(this.anuncio).forEach(key => {
-        payload+=`${key}=${this.anuncio[key]}&`
-      });
+      console.log("anuncio.autor = " + this.anuncio.autor + " - anuncio.contenido = " + this.anuncio.contenido);
+      if (this.anuncio.autor.length > 0 && this.anuncio.contenido.length > 0 ){
+        let payload = "";
+        Object.keys(this.anuncio).forEach(key => {
+          payload+=`${key}=${this.anuncio[key]}&`
+        });
+        
+        axios.post(`${config.baseURL}/anuncios`, payload, {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+            //'Content-Type': 'application/application/json'
+          }
+        })
+        .then( response => {
+          console.log("Se ejecuta getAnuncios");
+          this._getAnuncios();
+        })
+      }
       
-      axios.post(`${config.baseURL}/anuncios`, payload, {
-        withCredentials: true,
-        headers: {
-          //'Content-Type': 'application/x-www-form-urlencoded'
-          'Content-Type': 'application/application/json'
-        }
-      })
-      .then( response => {
-        this._getAnuncios();
-      })
     }
   }
 }
